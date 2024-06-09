@@ -8,7 +8,7 @@ const InputText = ({Title,Placeholder,Value,Event,size,Type,icon}) => {
         <Text className="text-black font-bold">{Title}</Text>
         <View className="flex-row items-center">
             <Icon name={icon} size={size? size : 20} color="black"/>
-            <TextInput autoCapitalize='none' keyboardType={Type} placeholder={Placeholder}/>
+            <TextInput value={Value} onChangeText={Event} autoCapitalize='none' keyboardType={Type} placeholder={Placeholder}/>
         </View>
       </View>
   )
