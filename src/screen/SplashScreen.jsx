@@ -13,7 +13,7 @@ export default function SplashScreen({navigation}) {
     try {
       const user = await GetDataStore("data_User");
       const JSONparse = JSON.parse(user);
-      if(!JSONparse) return null
+      if(!JSONparse) return navigation.replace("LoginScreen");
       const {data} = await axios.post(API_URL+"/login",JSONparse);
       setToken(data.token);
       setInfoUser(data.user)
