@@ -18,10 +18,11 @@ export default function LoginScreen({navigation}) {
   });
   const [seePassword,setSeePassword] = useState(true)
   const [Loading,setLoading] = useState(false)
-  const { setToken } = useAppContext()
+  const { setToken,setInfoUser } = useAppContext()
   const ChangeEmail = (email)=>setFormData((prev)=>({...prev,email}));
   const ChangePass = (password)=>setFormData((prev)=>({...prev,password}));
   const VisiblePass = () => setSeePassword(!seePassword);
+  
   const LoginApp = async() =>{
     try {
       const {email,password} = formData
@@ -31,18 +32,24 @@ export default function LoginScreen({navigation}) {
       if(!email || !password || !isValidEmail) return ToastAndroid.show("Email/Password Tidak Valid",ToastAndroid.BOTTOM)
       const {data} = await axios.post(API_URL+"/login",formData)
       setToken(data.token)
+      setInfoUser(data.user)
       await StoreData("data_User",JSON.stringify(formData))
       await StoreData("Token_USer",data.token)
+      await StoreData("Info_User",JSON.stringify(data.user))
       setLoading(false)
       setFormData({email:"",password:""})
-      // navigation.reset({routes:["HomeScreen"]})
-      console.log(data)
+      navigation.reset({routes:[{name:"HomeScreen"}]})
     } catch (error) {
       console.log(error);
+      setLoading(false)
       ToastAndroid.show("Periksa Koneksi Internet Gagal Akses Aplikasi",ToastAndroid.BOTTOM)
     }
   }
   
+  const GoToRegister = () =>{
+    navigation.navigate("RegisterScreen")
+  }
+
   return (
     <Container classname={"flex-1 justify-center p-2"}>
             <Text className="text-[20px] text-center font-bold text-black mb-4">Masuk</Text>
@@ -67,8 +74,8 @@ export default function LoginScreen({navigation}) {
             </View>
             
             <View className="h-[150px] items-center justify-center">
-              <ButtonYellow Event={LoginApp} />
-              <ButtonGreen />
+              <ButtonYellow Event={LoginApp} Title={"Masuk"}/>
+              <ButtonGreen Event={GoToRegister} Title={"Daftar"}/>
             </View>
 
             <LoadingModal Visible={Loading}/>

@@ -1,9 +1,11 @@
-import { View, Text } from 'react-native'
 import React from 'react'
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack';
 import SplashScreen from '@screen/SplashScreen';
 import LoginScreen from '@screen/LoginScreen';
+import RegisterScreen from '@screen/RegisterScreen';
+import HomeScreen from '@screen/HomeScreen';
+import CameraScreen from '@screen/CameraScreen';
 
 const Stack = createStackNavigator()
 const ScreenList = [
@@ -14,7 +16,19 @@ const ScreenList = [
     {
         name : "LoginScreen",
         component : LoginScreen
-    }
+    },
+    {
+        name : "RegisterScreen",
+        component : RegisterScreen
+    },
+    {
+        name : "HomeScreen",
+        component : HomeScreen
+    },
+    {
+        name : "CameraScreen",
+        component : CameraScreen
+    },
 ]
 
 
