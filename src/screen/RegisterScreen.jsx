@@ -8,6 +8,7 @@ import ButtonYellow from '@components/ButtonYellow'
 import ButtonGreen from '@components/ButtonGreen'
 import axios from 'axios'
 import { API_URL } from '@utils/Cons'
+import ServerApi from '@api/Http'
 
 export default function RegisterScreen({navigation}) {
   const [formData,setFormData] = useState({
@@ -28,7 +29,8 @@ export default function RegisterScreen({navigation}) {
   const [visible,setVisible] = useState(true)
   const Gender = [{label : "Pria",value:"Pria"},{label:"Wanita",value:"Wanita"}]
   const Position = [{label : "Staff",value:"Staff"},{label:"Manager",value:"Manager"},{label : "Supervisor",value:"Supervisor"}]
-  
+  const URL = ServerApi();
+
   const changeName = (name)=>setFormData((Prev)=>({...Prev,name : name}))
   const changeGender = (gender)=>setFormData((prev)=>({...prev,gender: gender}))
   const changeEmail = (email)=>setFormData((prev)=>({...prev,email : email}))
@@ -78,8 +80,8 @@ export default function RegisterScreen({navigation}) {
 
   const RegisAccount = async() =>{
     try {
-        const {data} = await axios.post(API_URL + "/register",formData);
-        Alert.alert("Success mendaftar",data.message)
+        const {data} = await URL.post(API_URL + "/register",formData);
+        Alert.alert("Success mendaftar",data.message);
         navigation.reset({routes:[{name:"LoginScreen"}]})
     } catch (error) {
         console.log(error.response);

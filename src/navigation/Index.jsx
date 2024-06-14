@@ -31,11 +31,10 @@ const ScreenList = [
     },
 ]
 
-
 const Navigation = () => {
   return (
     <NavigationContainer>
-        <Stack.Navigator screenOptions={{headerShown:false}}>
+        <Stack.Navigator initialRouteName='SplashScreen' screenOptions={{headerShown:false}}>
             {
                 ScreenList.flatMap(({name,component},index)=>(
                     <Stack.Screen key={index} name={name} component={component} />

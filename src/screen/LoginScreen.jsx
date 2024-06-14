@@ -10,7 +10,7 @@ import LoadingModal from '@components/LoadingModal'
 import { API_URL, isValidEmail } from '@utils/Cons'
 import axios from 'axios'
 import { StoreData } from '@utils/EncryptStorage'
-
+import ServerAPI from "@api/Http"
 export default function LoginScreen({navigation}) {
   const [formData,setFormData] = useState({
     email : "",
@@ -22,15 +22,16 @@ export default function LoginScreen({navigation}) {
   const ChangeEmail = (email)=>setFormData((prev)=>({...prev,email}));
   const ChangePass = (password)=>setFormData((prev)=>({...prev,password}));
   const VisiblePass = () => setSeePassword(!seePassword);
+  const URL = ServerAPI()
   
   const LoginApp = async() =>{
     try {
       const {email,password} = formData
       isValidEmail(email)
       Keyboard.dismiss()
+      if(!email || !password || !isValidEmail) return ToastAndroid.show("Email / Password Tidak Valid",ToastAndroid.BOTTOM)
       setLoading(!Loading)
-      if(!email || !password || !isValidEmail) return ToastAndroid.show("Email/Password Tidak Valid",ToastAndroid.BOTTOM)
-      const {data} = await axios.post(API_URL+"/login",formData)
+      const { data } = await URL.post("/login",formData)
       setToken(data.token)
       setInfoUser(data.user)
       await StoreData("data_User",JSON.stringify(formData))
@@ -39,10 +40,13 @@ export default function LoginScreen({navigation}) {
       setLoading(false)
       setFormData({email:"",password:""})
       navigation.reset({routes:[{name:"HomeScreen"}]})
+
     } catch (error) {
+      
       console.log(error);
       setLoading(false)
-      ToastAndroid.show("Periksa Koneksi Internet Gagal Akses Aplikasi",ToastAndroid.BOTTOM)
+      ToastAndroid.show("Pastikan Kamu Terhubung ke internet",ToastAndroid.BOTTOM)
+
     }
   }
   
@@ -52,7 +56,7 @@ export default function LoginScreen({navigation}) {
 
   return (
     <Container classname={"flex-1 justify-center p-2"}>
-            <Text className="text-[20px] text-center font-bold text-black mb-4">Masuk</Text>
+            <Text className="text-[20px] text-center font-[Roboto-Bold] text-black mb-4">Masuk</Text>
             
             <View className="h-[160px] justify-around">
               <InputText 

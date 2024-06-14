@@ -14,7 +14,7 @@ export const GetDataStore = async (Key) =>{
         const Data = await EncryptedStorage.getItem(Key);
         return Data
     } catch (error) {
-        console.log(error);
+        console.log("GET DATA : ",error);
         return null        
     }
 }

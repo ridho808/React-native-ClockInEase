@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity } from 'react-native'
+import { View, Text, TouchableOpacity, Alert,ToastAndroid } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import {
   Camera,
@@ -7,13 +7,13 @@ import {
   useFrameProcessor,
 } from "react-native-vision-camera";
 import { useBarcodeScanner } from "react-native-vision-camera-barcodes-scanner";
-import { API_URL, Delay } from '@utils/Cons';
 import Icon from "react-native-vector-icons/MaterialIcons"
 import { Shadow } from '@utils/StyleGlobal';
 import { Worklets } from 'react-native-worklets-core';
 import { useAppContext } from '@context/AppContext';
-import axios from 'axios';
 import LoadingModal from '@components/LoadingModal';
+import ServerApi from '@api/Http'
+import { Delay } from '@utils/Cons';
 
 export default function CameraScreen({navigation}) {
   const {Token} = useAppContext()
@@ -24,7 +24,7 @@ export default function CameraScreen({navigation}) {
   const [active,setActive] = useState(true)
   const [Modals,setModals] = useState(false)
   const [FrameQr,setFrameQr] = useState({bottom:0,top:0,left:0,right:0,hight:0,width:0,border:0})
-
+  const URL  = ServerApi(Token)
 
   const sendPresence = async (str) =>{
     try {
@@ -36,12 +36,22 @@ export default function CameraScreen({navigation}) {
         desc : ""
       }
       const Pulang = {}
-      const FormData = str.includes("presence-in") ? Hadir : Pulang;
-      await axios.post(`${str}`,FormData,{headers:{Authorization: `Bearer ${Token}`}});
-      navigation.reset({routes:[{name:"HomeScreen"}]})
+      const FormData = str.includes("/presence-in") ? Hadir : Pulang;
+      const {data} = await URL.post(`${str}`,FormData);
+      Alert.alert("Pesan",data.message,[{
+        text : "OK",
+        onPress : ()=>{
+          navigation.reset({routes:[{name:"HomeScreen"}]})
+        }
+      }]);
     } catch (error) {
       setModals(!active)
-      navigation.reset({routes:[{name:"HomeScreen"}]});
+      Alert.alert("Pesan","Terjadi Kesalahan",[{
+        text : "OK",
+        onPress : ()=>{
+          navigation.reset({routes:[{name:"HomeScreen"}]})
+        }
+      }]);
     }
   }
 
@@ -66,13 +76,19 @@ export default function CameraScreen({navigation}) {
     right:FrameQr.right,
     borderRadius:8
   }
+  const Messages = (message)=>{
+    ToastAndroid.show(message,ToastAndroid.SHORT);
+  }
 
   const setValueFrame = Worklets.createRunOnJS(setFrameQr)
   const SendDataPresence = Worklets.createRunOnJS(sendPresence)
   const cameraActive = Worklets.createRunOnJS(setActive)
-  const frameProcessor = useFrameProcessor((frame) => {
+  const toast = Worklets.createRunOnJS(Messages)
+
+  const frameProcessor = useFrameProcessor( (frame) => {
     'worklet'
     const data = scanBarcodes(frame)
+    
     if(data.length){
       const {bottom,top,left,right,height,width,rawValue} = data[0];
       setValueFrame({
@@ -83,17 +99,20 @@ export default function CameraScreen({navigation}) {
         hight:height + 20,
         width:width+20,
         border:2});
-        if(rawValue.includes("presence-in")){
+        if(rawValue.includes("presensi-masuk")){
           cameraActive(false)
-          SendDataPresence(rawValue);
-        }else if (rawValue.includes("presence-out")){
+          SendDataPresence("https://dev.pondokdigital.pondokqu.id/api/presence-in");
+          return
+        }else if (rawValue.includes("presensi-pulang")){
           cameraActive(false)
-          SendDataPresence(rawValue);
+          SendDataPresence("https://dev.pondokdigital.pondokqu.id/api/presence-out");
+          return
+        }else{
+          toast("Barcode Tidak Diketahui ....")
         }
     }else{
       setValueFrame({bottom:0,top:0,right:0,left:0,width:0,hight:0,border:0});
     }
-    
   }, [])
 
   useEffect(()=>{

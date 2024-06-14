@@ -19,7 +19,8 @@ export default function SplashScreen({navigation}) {
       setInfoUser(data.user)
       navigation.reset({routes:[{name:"HomeScreen"}]})
     } catch (error) {
-      console.log(error.response);
+      console.log("AXIOS NETWORK",error.message);
+      navigation.replace("LoginScreen");
     }
   }
   useEffect(()=>{
