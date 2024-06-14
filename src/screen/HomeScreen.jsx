@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import Container from '@components/Container'
-import {Modal, RefreshControl, Text, TouchableOpacity, View } from 'react-native'
+import {ActivityIndicator, Modal, RefreshControl, Text, TouchableOpacity, View } from 'react-native'
 import Headers from '@components/Headers'
 import { ClearStroge } from '@utils/EncryptStorage'
 import Icon from "react-native-vector-icons/Ionicons"
@@ -88,9 +88,13 @@ export default function HomeScreen({navigation}) {
           <View className="flex-row w-[220px] justify-evenly">
             <ButtonPrev Event={handlePrev}/>
             <View className="bg-white w-[100px] items-center justify-center rounded-xl" style={Shadow}>
-              <Text className="text-black font-bold">
-                {Month[Index]}
-              </Text>
+              {
+                !Month.length ?
+                <ActivityIndicator color={"black"} size={30}/> :
+                <Text className="text-black font-bold">
+                  {Month[Index]}
+                </Text>
+              }
             </View>
             <ButtonNext Event={handleNext}/>
           </View>

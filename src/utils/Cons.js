@@ -1,4 +1,5 @@
-export const API_URL = "https://dev.pondokdigital.pondokqu.id/api"
+import { API_BASE } from "@env"
+export const API_URL = API_BASE
 
 export const isValidEmail = (email) => {
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;

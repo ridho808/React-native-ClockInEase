@@ -84,7 +84,6 @@ export default function RegisterScreen({navigation}) {
         Alert.alert("Success mendaftar",data.message);
         navigation.reset({routes:[{name:"LoginScreen"}]})
     } catch (error) {
-        console.log(error.response);
         Alert.alert("Gagal Mendaftar","Periksa formulir apakah sudah benar ?")
     }
   }
